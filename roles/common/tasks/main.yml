@@ -1,0 +1,19 @@
+---
+- name: Create devops group
+  group:
+    name: devops
+    state: present
+
+- name: Create standard user
+  user:
+    name: deploy
+    groups: devops
+    append: yes
+    state: present
+    create_home: yes
+
+- name: Allow devops passwordless sudo
+  copy:
+    dest: /etc/sudoers.d/devops
+    content: "%%devops ALL=(ALL) NOPASSWD: ALL"
+    mode: 0440

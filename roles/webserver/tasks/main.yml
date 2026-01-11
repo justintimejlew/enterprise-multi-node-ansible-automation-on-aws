@@ -1,0 +1,23 @@
+---
+- name: Install Apache
+  ansible.builtin.dnf:
+    name: httpd
+    state: present
+
+- name: Deploy index.html
+  ansible.builtin.copy:
+    dest: /var/www/html/index.html
+    content: "Enterprise Web Server - {{ inventory_hostname }}"
+
+- name: Start and enable Apache
+  ansible.builtin.service:
+    name: httpd
+    state: started
+    enabled: true
+
+- name: Open HTTP port in firewall
+  ansible.builtin.firewalld:
+    service: http
+    permanent: true
+    state: enabled
+    immediate: true

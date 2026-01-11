@@ -1,0 +1,19 @@
+---
+- name: Bootstrap all nodes
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure base packages are installed
+      ansible.builtin.dnf:
+        name:
+          - vim
+          - curl
+          - firewalld
+          - tree
+          - git
+        state: present
+    - name: Enable and start firewalld
+      ansible.builtin.service:
+        name: firewalld
+        state: started
+        enabled: true
