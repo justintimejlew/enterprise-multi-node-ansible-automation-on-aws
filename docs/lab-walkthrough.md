@@ -8,7 +8,7 @@
 - Security Group: On managed nodes, only allow SSH only from control node after it has been created.
 - User data: package pre-install (ansible-core on control, python3 on managed).
 
-(image1)[]
+[AWS EC2 Instances Configured Correctly](https://raw.githubusercontent.com/justintimejlew/enterprise-multi-node-ansible-automation-on-aws/refs/heads/main/docs/Screenshots/1.png)
 
 ### 2. Control node access and prep
 - Run `ssh -i ~/.ssh/ansible-control.pem ec2-user@<publicipaddress>` to access `ansible-control` node.
@@ -27,17 +27,17 @@ Run the following commands:
 
 - Run `ansible all -i inventory.ini -m ping` and the results should show:
     
-    [image]()
+    [Successful Ansible Ping to Inventory Nodes](https://raw.githubusercontent.com/justintimejlew/enterprise-multi-node-ansible-automation-on-aws/refs/heads/main/docs/Screenshots/2.png)
 
 ### 5. Bootstrap → Full deployment
 - Run `ansible-playbook -i inventory.ini playbooks/bootstrap.yml` and the results should show:
 
-    [image]()
+    [bootstrap.yml successful run](https://raw.githubusercontent.com/justintimejlew/enterprise-multi-node-ansible-automation-on-aws/refs/heads/main/docs/Screenshots/3.png)
 - Run `ansible-playbook -i inventory.ini playbooks/site.yml` twice
     #### idempotent run #1:
-    [image]()
+    [site.yml idempotent run #1](https://raw.githubusercontent.com/justintimejlew/enterprise-multi-node-ansible-automation-on-aws/refs/heads/main/docs/Screenshots/4.png)
     #### idempotent run #2 (0 changes)
-    [image]()
+    [site.yml idempotent run #2](https://raw.githubusercontent.com/justintimejlew/enterprise-multi-node-ansible-automation-on-aws/refs/heads/main/docs/Screenshots/5.png)
 
 ### 6. Verification
 - From control node or managed-db node: run `curl http://managed-web` → it should show "Enterprise Web Server - managed-web"
