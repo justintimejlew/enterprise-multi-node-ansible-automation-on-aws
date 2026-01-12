@@ -34,9 +34,10 @@ Run the following commands:
 
     <img src="https://raw.githubusercontent.com/justintimejlew/enterprise-multi-node-ansible-automation-on-aws/refs/heads/main/docs/Screenshots/3.png"/>
 - Run `ansible-playbook -i inventory.ini playbooks/site.yml` twice
-    #### idempotent run #1:
+    ## **idempotent run #1:**
     <img src="https://raw.githubusercontent.com/justintimejlew/enterprise-multi-node-ansible-automation-on-aws/refs/heads/main/docs/Screenshots/4.png"/>
-    #### idempotent run #2 (0 changes)
+    
+    ## **idempotent run #2 (0 changes):**
     <img src="https://raw.githubusercontent.com/justintimejlew/enterprise-multi-node-ansible-automation-on-aws/refs/heads/main/docs/Screenshots/5.png"/>
 
 ### 6. Verification
