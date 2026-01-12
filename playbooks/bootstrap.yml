@@ -1,5 +1,5 @@
 ---
-- name: Bootstrap all nodes
+- name: Bootstrap all managed nodes
   hosts: all
   become: true
   tasks:

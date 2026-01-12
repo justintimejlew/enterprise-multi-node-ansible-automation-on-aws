@@ -31,7 +31,7 @@ ansible-control
   - `managed-db` (t3.micro) → MariaDB database (PostgreSQL is optional)
   - `managed-server` (t3.micro) → Generic server (common config only)
 - **Networking**: All nodes in same VPC, same key pair, Security Group allows SSH only from control node
-- **Access**: Non-root user `jlewis` with passwordless sudo (or use your own username).
+- **Access**: Non-root user `ansible` with passwordless sudo.
 
 ## Repository Structure
 
@@ -69,7 +69,7 @@ enterprise-ansible-lab/
 
 ## Security Practices Demonstrated
 
-- EC2 instances booted with user data for consistent automation
+- EC2 instances booted with user data for consistent installation of base packages
 - Key-based SSH only (no passwords)
 - Non-root automation user with targeted sudo
 - Firewalld enabled and configured with least-privilege ports
@@ -78,33 +78,34 @@ enterprise-ansible-lab/
 
 ## How to Run
 
-1. Configure AWS EC2 instances using user data to install Ansible and requirements during boot process
-   * Control node user data:
+1. Configure AWS EC2 instances using user data to install Ansible and requirements during boot process. Recommended to create a key pair to be used across all nodes.
+   * Control node user data (t3.small):
 
       ```
       #!/bin/bash
       dnf update -y
-      dnf install -y ansible-core python3 python3-pip policycoreutils-python-utils yamllint
-      pip  install ansible-navigator
+      dnf install -y ansible-core python3 python3-pip policycoreutils-python-utils 
+      pip3  install ansible-navigator
+      ansible-galaxy collection install ansible.posix
       ```
-   * Managed nodes user data (minimal):
+   * Managed nodes user data (t3.micro):
 
       ```
       #!/bin/bash
       dnf update -y
       dnf install -y python3 policycoreutils-python-utils
+      useradd -m -s /bin/bash ansible
+      echo "ansible ALL=(ALL) NOPASSWD:ALL" | tee /etc/sudoers.d/ansible
+      chmod 0440 /etc/sudoers.d/ansible
       ```
 
-2. Manually create user `jlewis` and copy SSH key from control node
-   * SSH in as `ec2-user` (default)
-   * Create user `jlewis` then either:
-      * set a password
-      * add your public key (recommended)
-   * Run `ssh-keygen -t ed25519`
-   * Then copy public key to all managed nodes for created user and test SSH ability
-      * `ssh-copy-id jlewis@managed-web`
-      * `ssh-copy-id jlewis@managed-db`
-      * `ssh-copy-id jlewis@managed-server`
+2. Manually copy SSH key from control node
+   * SSH in as `ec2-user` (default), then switch user to `ansible`
+   * Run `ssh-keygen -t ed25519` for 
+   * Then copy public key to all managed nodes for created user `ansible` and test SSH ability
+      * `ssh-copy-id ansible@managed-web`
+      * `ssh-copy-id ansible@managed-db`
+      * `ssh-copy-id ansible@managed-server`
 3. Clone this repo and cd into it
 4. Test connectivity with managed EC2 instances by running: `ansible all -i inventory.ini -m ping`
 5. Run Bootstrap nodes:
@@ -121,7 +122,7 @@ Run `site.yml` twice to verify idempotency.
 ## Verification
 
 - Web: Access `http://<managed-web-public-ip>/` → Should show "Enterprise Web Server - managed-web"
-- DB: From control node: `mysql -u root -h managed-db` (no password yet — secure in production)
+- DB: Check if the service is running, enabled at boot, and has the appropriate firewall rules.
 
 ## Stretch Goals (Planned for later)
 
